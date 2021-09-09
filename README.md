@@ -114,7 +114,7 @@ For --sysroot and --gcc-toolchain flags you can look here that I answered: https
 
 # alp
 
-You can use to obfuscate any compiled object code to non-encrypted or encrypted hex code.
+You can use to obfuscate any compiled object code to non-encrypted or instruction specific encrypted hex code.
 
 **Example usages:**
 
