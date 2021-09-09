@@ -1,5 +1,5 @@
 # kasirga-compiler
-This repository includes 'kasirga' compiler and 'alp' object code to encrypted hex code generator.
+This repository includes 'kasirga' compiler and 'alp' object code to encrypted hex code obfuscator.
 
 I assume that gnu compiler toolchain (gcc, g++) installed on your host pc.
 
