@@ -175,11 +175,11 @@ Gives output as some instructions encrypted out.hex (most left bit is 0. most ri
 **21-)** sll
 **22-)** slt
 **23-)** sltu
-**24-)** xor
+**24-)** xor_
 **25-)** srl
 **26-)** sra
-**27-)** or
-**28-)** and
+**27-)** or_
+**28-)** and_
 **29-)** addiw
 **30-)** slliw
 **31-)** srliw
