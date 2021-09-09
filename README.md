@@ -1,7 +1,7 @@
 # kasirga-compiler
 This repository includes 'kasirga' compiler and 'alp' object code to instruction specific encrypted hex code obfuscator.
 
-I assume that gnu compiler toolchain (gcc, g++) installed on your host pc.
+I assume that gnu compiler toolchain (gcc, g++) pre installed on your host pc.
 
 # CMake and Ninja Installation
 ```bash
