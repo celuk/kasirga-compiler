@@ -1,65 +1,35 @@
-find_package(LLVM)
-find_package(LLVM REQUIRED CONFIG)
-
-include_directories(${LLVM_INCLUDE_DIRS})
-add_definitions(${LLVM_DEFINITIONS})
-list(APPEND CMAKE_MODULE_PATH "${LLVM_CMAKE_DIR}")
-include(AddLLVM)
-
-#include(AddLLVM.cmake)
-
-set(LLVM_LINK_COMPONENTS
-  AllTargetsDescs
-  AllTargetsDisassemblers
-  AllTargetsInfos
-  BinaryFormat
-  CodeGen
-  DebugInfoDWARF
-  DebugInfoPDB
-  Demangle
-  MC
-  MCDisassembler
-  Object
-  Support
-  Symbolize
-#  RISCVInfo
-  )
-
-##
-#set(LLVM_TARGET_DEFINITIONS RISCV.td)
+# This file will recurse into all subdirectories that contain CMakeLists.txt
+# Setting variables that match the pattern LLVM_TOOL_{NAME}_BUILD to Off will
+# prevent traversing into a directory.
 #
-#tablegen(LLVM RISCVGenAsmMatcher.inc -gen-asm-matcher)
-#tablegen(LLVM RISCVGenAsmWriter.inc -gen-asm-writer)
-#tablegen(LLVM RISCVGenCompressInstEmitter.inc -gen-compress-inst-emitter)
-#tablegen(LLVM RISCVGenDAGISel.inc -gen-dag-isel)
-#tablegen(LLVM RISCVGenDisassemblerTables.inc -gen-disassembler)
-#tablegen(LLVM RISCVGenGlobalISel.inc -gen-global-isel)
-#tablegen(LLVM RISCVGenInstrInfo.inc -gen-instr-info)
-#tablegen(LLVM RISCVGenMCCodeEmitter.inc -gen-emitter)
-#tablegen(LLVM RISCVGenMCPseudoLowering.inc -gen-pseudo-lowering)
-#tablegen(LLVM RISCVGenRegisterBank.inc -gen-register-bank)
-#tablegen(LLVM RISCVGenRegisterInfo.inc -gen-register-info)
-#tablegen(LLVM RISCVGenSubtargetInfo.inc -gen-subtarget)
-#tablegen(LLVM RISCVGenSystemOperands.inc -gen-searchable-tables)
-#
-#add_public_tablegen_target(RISCVCommonTableGen)
-##
+# The only tools that need to be explicitly added are ones that have explicit
+# ordering requirements.
+
+# Iterates all the subdirectories to create CMake options to enable/disable
+# traversing each directory.
+#create_llvm_tool_options()
+
+if(NOT LLVM_BUILD_LLVM_DYLIB AND NOT LLVM_BUILD_LLVM_C_DYLIB)
+  set(LLVM_TOOL_LLVM_SHLIB_BUILD Off)
+endif()
+
+if(NOT LLVM_USE_INTEL_JITEVENTS )
+  set(LLVM_TOOL_LLVM_JITLISTENER_BUILD Off)
+endif()
+
+if(CYGWIN OR NOT LLVM_ENABLE_PIC)
+  set(LLVM_TOOL_LTO_BUILD Off)
+endif()
+
+# Add LTO, llvm-ar, llvm-config, and llvm-profdata before clang, ExternalProject
+# requires targets specified in DEPENDS to exist before the call to
+# ExternalProject_Add.
+add_subdirectory(alp)
+add_subdirectory(kasirgacomp)
 
 
+# Automatically add remaining sub-directories containing a 'CMakeLists.txt'
+# file as external projects.
+add_llvm_implicit_projects()
 
-add_llvm_executable(alp
-  alp.cpp
-  COFFDump.cpp
-  ELFDump.cpp
-  MachODump.cpp
-  WasmDump.cpp
-  XCOFFDump.cpp
-
-  DEPENDS
-  intrinsics_gen
-  )
-
-#  ADD_TO_COMPONENT
-#  RISCV
-#)
-
+set(LLVM_COMMON_DEPENDS ${LLVM_COMMON_DEPENDS} PARENT_SCOPE)
