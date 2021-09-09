@@ -1,5 +1,5 @@
 # kasirga-compiler
-This repository includes 'kasirga' compiler and 'alp' object code to encrypted hex code obfuscator.
+This repository includes 'kasirga' compiler and 'alp' object code to instruction specific encrypted hex code obfuscator.
 
 I assume that gnu compiler toolchain (gcc, g++) installed on your host pc.
 
@@ -116,5 +116,22 @@ For --sysroot and --gcc-toolchain flags you can look here that I answered: https
 
 You can use to obfuscate any compiled object code to non-encrypted or encrypted hex code.
 
-Example usages:
+**Example usages:**
 
+Gives output as non-encrypted out.hex:
+
+```bash
+alp -d example.o
+```
+
+Gives output as add, sub instructions encrypted out.hex:
+
+```bash
+/home/shc/Desktop/kasirga-compiler/build/bin/alp --add --sub -d example.o
+```
+
+Gives output as add, sub instructions encrypted out.hex:
+
+```bash
+/home/shc/Desktop/kasirga-compiler/build/bin/alp --add --sub -d example.o
+```
