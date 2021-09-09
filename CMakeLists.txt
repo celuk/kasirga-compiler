@@ -1,9 +1,10 @@
 cmake_minimum_required(VERSION 3.13.4)
-project(alp)
+project(kasirga)
+
 
 set(LT_LLVM_INSTALL_DIR "" CACHE PATH "LLVM installation directory")
 
-
+# A bit of a sanity checking
 set(LT_LLVM_INCLUDE_DIR "${LT_LLVM_INSTALL_DIR}/include/llvm")
 if(NOT EXISTS "${LT_LLVM_INCLUDE_DIR}")
 message(FATAL_ERROR
@@ -12,13 +13,19 @@ endif()
 
 set(LT_LLVM_CMAKE_FILE "${LT_LLVM_INSTALL_DIR}/lib/cmake/llvm/LLVMConfig.cmake")
 
+#
+set(CT_LLVM_CMAKE_FILE "${LT_LLVM_INSTALL_DIR}/lib/cmake/clang/ClangConfig.cmake")
+#
+
 ## aslinda build diri de export etmek istenmesi lazim, o da optional olmali
 if(NOT EXISTS "${LT_LLVM_CMAKE_FILE}")
 ## ~/llvm/llvm-project/llvm den ~/llvm/llvm-project/
 ## ~/llvm/llvm-project/build/lib/cmake/llvm
 get_filename_component(UPPER_DIR ${LT_LLVM_INSTALL_DIR} DIRECTORY)
 set(LT_LLVM_CMAKE_FILE "${UPPER_DIR}/build/lib/cmake/llvm/LLVMConfig.cmake")
-
+#
+set(CT_LLVM_CMAKE_FILE "${UPPER_DIR}/build/lib/cmake/clang/ClangConfig.cmake")
+#
 endif()
 ##
 
@@ -28,11 +35,12 @@ message(FATAL_ERROR
 endif()
 
 
-
 list(APPEND CMAKE_PREFIX_PATH "${LT_LLVM_INSTALL_DIR}/lib/cmake/llvm/")
+#
+list(APPEND CMAKE_PREFIX_PATH "${LT_LLVM_INSTALL_DIR}/lib/cmake/clang/")
+#
 
 find_package(LLVM REQUIRED CONFIG)
-
 
 #if(NOT "11" VERSION_EQUAL "${LLVM_VERSION_MAJOR}")
 #  message(FATAL_ERROR "Found LLVM ${LLVM_VERSION_MAJOR}, but need LLVM 11")
@@ -48,6 +56,9 @@ message("LLVM STATUS:
   Targets     ${LLVM_TARGETS_TO_BUILD}"
 )
 
+# Set the LLVM header and library paths
+include_directories(SYSTEM ${LLVM_INCLUDE_DIRS})
+##
 
 #####################
 get_filename_component(LT_LLVM_PROJECT_DIR ${LT_LLVM_INSTALL_DIR} DIRECTORY)
@@ -55,9 +66,23 @@ get_filename_component(LT_LLVM_PROJECT_DIR ${LT_LLVM_INSTALL_DIR} DIRECTORY)
 #set(LT_LLVM_PROJECT_DIR "${UPPER_DIR}")
 #####################
 
-# Set the LLVM header and library paths
-include_directories(SYSTEM ${LLVM_INCLUDE_DIRS})
-##
+
+#include_directories(SYSTEM "~/llvm/llvm-project/clang/lib/Basic/Targets")
+
+include_directories(SYSTEM "${LT_LLVM_PROJECT_DIR}/build/include")
+include_directories(SYSTEM "${LT_LLVM_PROJECT_DIR}/build/tools/clang")
+include_directories(SYSTEM "${LT_LLVM_PROJECT_DIR}/build/tools/clang/include")
+include_directories(SYSTEM "${LT_LLVM_PROJECT_DIR}/build/tools/clang/lib")
+include_directories(SYSTEM "${LT_LLVM_PROJECT_DIR}/build/tools/clang/lib/Driver")
+include_directories(SYSTEM "${LT_LLVM_PROJECT_DIR}/llvm/include")
+include_directories(SYSTEM "${LT_LLVM_PROJECT_DIR}/clang/include")
+include_directories(SYSTEM "${LT_LLVM_PROJECT_DIR}")
+include_directories(SYSTEM "${LT_LLVM_PROJECT_DIR}/clang")
+include_directories(SYSTEM "${LT_LLVM_PROJECT_DIR}/clang/lib")
+include_directories(SYSTEM "${LT_LLVM_PROJECT_DIR}/clang/lib/Tooling")
+include_directories(SYSTEM "${LT_LLVM_PROJECT_DIR}/clang/lib/Driver")
+include_directories(SYSTEM "${LT_LLVM_PROJECT_DIR}/clang/lib/Driver/ToolChains")
+include_directories(SYSTEM "${LT_LLVM_PROJECT_DIR}/clang/lib/Driver/ToolChains/Arch")
 include_directories(SYSTEM "${LT_LLVM_PROJECT_DIR}/llvm/lib/Target/RISCV")
 include_directories(SYSTEM "${LT_LLVM_PROJECT_DIR}/build/lib/Target/RISCV")
 #include_directories(SYSTEM "~/llvm/llvm-project/build/lib/cmake/llvm")
@@ -65,7 +90,6 @@ include_directories(SYSTEM "${LT_LLVM_PROJECT_DIR}/build/lib/Target/RISCV")
 ##
 link_directories(${LLVM_LIBRARY_DIRS})
 add_definitions(${LLVM_DEFINITIONS})
-
 
 
 set(CMAKE_CXX_STANDARD 14 CACHE STRING "")
@@ -78,14 +102,18 @@ endif()
 
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall\
-    -fdiagnostics-color=always")
+    -fdiagnostics-color=always") #-nostartfiles
+
+##
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall\
+#    -fdiagnostics-color=always -fno-exceptions")
+##
 
 
 
 if(NOT LLVM_ENABLE_RTTI)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-rtti")
 endif()
-
 
 
 include(CheckCXXCompilerFlag)
@@ -149,4 +177,3 @@ add_subdirectory(tools)
   #ADD_TO_COMPONENT
   #RISCV
   #)
-
