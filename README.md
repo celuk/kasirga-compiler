@@ -141,3 +141,9 @@ Gives output as some instructions encrypted out.hex (most left bit is 0. most ri
 ```bash
 /home/shc/Desktop/kasirga-compiler/build/bin/alp --bits 100000000000000001011001011001000001000100100100010100001010000010001111001000000000000000 -d example.o
 ```
+
+Gives output as some instructions encrypted out.hex (most left bit is 0. most right bit is 89. instruction):
+
+```bash
+/home/shc/Desktop/kasirga-compiler/build/bin/alp --addi --bits 100000000000000001011001011001000001000100100100010100001010000010001111001000000000000000 -d example.o
+```
